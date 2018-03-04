@@ -1,0 +1,10 @@
+db:
+  conn_url: postgresql://{user}:{pwd}@{host}/{database}
+  host: localhost
+  user: tns
+  database: tns
+  pwd: tns#1
+  schema: public
+
+app:
+  random_config: 0
