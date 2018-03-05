@@ -3,6 +3,9 @@ import yaml
 
 import tns.cfg.config as tns_config
 import tns.db.database as tns_database
+import tns.db.test_models as test_models
+
+from tns.db.model.player import Player
 
 logger = None
 
@@ -70,6 +73,8 @@ def main(
             any error happens
         create_database_objects: if True it recreates the db schema
             Default: False
+        test_db_models: if True it does some testing with Models
+            Default: False
     """
     global logger
 
@@ -77,6 +82,7 @@ def main(
     tns_logging_config_file = kwargs.get('tns_logging_config_file', 'config/logging.yml')
     logging_level = kwargs.get('logging_level')
     create_database_objects = kwargs.get('create_database_objects', False)
+    test_db_models = kwargs.get('test_db_models', False)
 
     # initialize log config
     __load_log_config(file_path=tns_logging_config_file)
@@ -105,5 +111,10 @@ def main(
         logger.warning("Recreating TNS tables")
         tns_database.create()
         logger.warning("TNS tables dropped and created again!")
+
+    if test_db_models:
+        logger.warning("Inserting dummy models instances")
+        test_models.do_test()
+        logger.warning("Done inserting dummy models!")
 
     logger.info("TNS initialized!")
