@@ -4,8 +4,7 @@ import yaml
 import tns.cfg.config as tns_config
 import tns.db.database as tns_database
 import tns.db.test_models as test_models
-
-from tns.db.model.player import Player
+import tns.job.scheduler as tns_scheduler
 
 logger = None
 
@@ -116,5 +115,7 @@ def main(
         logger.warning("Inserting dummy models instances")
         test_models.do_test()
         logger.warning("Done inserting dummy models!")
+
+    tns_scheduler.run()
 
     logger.info("TNS initialized!")

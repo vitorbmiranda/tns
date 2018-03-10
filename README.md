@@ -12,6 +12,7 @@ the job framework is added**)
     - `cfg`: config layer
     - `db`: database layer
         - `model`: one file for every table in DB
+    - `job`: schedule/job layer
 - `config`: yml files
     - `tns.yml`: db and app configuration
     - `logging.yml`: logging config    

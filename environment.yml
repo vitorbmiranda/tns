@@ -1,3 +1,4 @@
+name: tns
 channels:
 - defaults
 dependencies:
@@ -24,6 +25,9 @@ dependencies:
   - pycparser==2.18
   - python-mimeparse==1.6.0
   - pyyaml==3.12
+  - schedule==0.5.0
   - shyaml==0.5.0
   - six==1.11.0
   - sqlalchemy==1.2.0b3
+prefix: /Users/vitor/miniconda2/envs/tns
+
