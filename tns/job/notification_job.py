@@ -9,4 +9,7 @@ def notify_everyone():
     # load players
     # etc ...
     # if we need to notify users, send the sms to each one
+
+    # here we use multithreading (e.g 10 parallel tasks to send the sms messages)
+    # https://www.quantstart.com/articles/Parallelising-Python-with-Threading-and-Multiprocessing
     print("Notification finished!")
