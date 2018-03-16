@@ -105,3 +105,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# crypto key
+tns.key
