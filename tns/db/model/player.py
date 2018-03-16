@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, LargeBinary
 from sqlalchemy.orm import relationship
 
 from tns.db.database import Base
@@ -13,9 +13,9 @@ class Player(Base):
     id = Column(Integer, primary_key=True)
     rankings_id = Column(Integer, nullable=False, unique=True)
     alias = Column(String(64), nullable=False)
-    phone_number = Column(String(64), nullable=False)
+    phone_number = Column(LargeBinary, nullable=False)
     created_at = Column(DateTime, default=datetime.now)
-    updatd_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now)
 
     def __init__(self, rankings_id, alias, phone_number):
         self.rankings_id = rankings_id

@@ -11,7 +11,7 @@ def run():
     This is the method that starts the scheduler which will run a job periodically
     """
 
-    print("Starting the scheduler")
+    logger.info("Starting the scheduler...")
 
     schedule.every(10).seconds.do(notification_job.notify_everyone)
 

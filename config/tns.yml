@@ -7,4 +7,5 @@ db:
   schema: public
 
 app:
-  random_config: 0
+  elite_rss_feed_uri: https://rankings.the-elite.net/all-prs.rss
+  crypto_key: /Users/vitor/sandbox/tns/tns.key

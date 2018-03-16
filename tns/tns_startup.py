@@ -5,6 +5,7 @@ import tns.cfg.config as tns_config
 import tns.db.database as tns_database
 import tns.db.test_models as test_models
 import tns.job.scheduler as tns_scheduler
+import tns.crypto.tns_crypto as tns_crypto
 
 logger = None
 
@@ -96,16 +97,18 @@ def main(
     # initialize cfg
     __load_tns_config(tns_config_file)
 
-    # inicializa DB
+    # initialize DB
     db_url = __build_db_url(tns_config.db_config)
     logger.debug("Final DB URL: {}".format(db_url))
-
-    # inicializa DB
     tns_database.init(db_url)
 
     logger.info("Initialized DB structure using the URL: {}".format(db_url))
 
-    # recria database e faz testes com os models caso -d (create_database_objects) seja passado
+    # initialize crypto module
+    key_location = tns_config.app_config['crypto_key']
+    tns_crypto.init(key_location)
+
+    # recreate db
     if create_database_objects:
         logger.warning("Recreating TNS tables")
         tns_database.create()

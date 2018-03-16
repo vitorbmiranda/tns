@@ -3,13 +3,14 @@ from tns.db.model.player import Player
 from tns.db.model.subscription_type import SubscriptionType
 from tns.db.model.player_subscription import PlayerSubscription
 from tns.db.model.meta_info import MetaInfo
+import tns.crypto.tns_crypto as tns_crypto
 
 
 def do_test():
     session = tns_database.Session()
 
-    player_one = Player('00001', 'Player One', '9999999999')
-    player_two = Player('00002', 'Player Two', '1010101010')
+    player_one = Player('00001', 'Player One', tns_crypto.encrypt('9999999999'))
+    player_two = Player('00002', 'Player Two', tns_crypto.encrypt('1010101010'))
 
     session.add(player_one)
     session.add(player_two)

@@ -16,7 +16,7 @@ class PlayerSubscription(Base):
     subscription_type_id = Column(Integer, ForeignKey("subscription_type.id"), nullable=False)
 
     created_at = Column(DateTime, default=datetime.now)
-    updatd_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now)
 
     def __init__(self, player, subscription_type):
         self.player_id = player.id

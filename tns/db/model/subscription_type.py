@@ -12,7 +12,7 @@ class SubscriptionType(Base):
     key = Column(String(128), nullable=False)
     name = Column(String(128), nullable=False)
     created_at = Column(DateTime, default=datetime.now)
-    updatd_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now)
 
     def __init__(self, key, name):
         self.key = key
