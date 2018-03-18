@@ -1,11 +1,11 @@
 import logging.config
 
 import tns.db.database as database
-import tns.msg.messenger as messenger
 import tns.parser.elite_rss.elite_rss_parser as elite_rss_parser
 
 from tns.db.model.player import Player
 from tns.msg.model.message import PRMessage
+from tns.msg.messenger import Messenger
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ def notify_everyone():
                 # this flag will be True if this time is a WR/UWR
                 is_wr = True
 
-                # TODO here we need to get how much points this record gave (either by rss - Thingy, or by our ranks parser)
+                # TODO here we need to get how much points this record gave (hopefully by rss)
                 # this flag will be True if this time has over X points (e.g 80, we have to configure that)
                 is_high_points = True
 
@@ -69,6 +69,7 @@ def notify_everyone():
                     # TODO get the data from the 'item' object, we don't have everything yet
                     message = PRMessage("Din Mor", "GE", "Dam", "Agent", "0:50", 100)
 
+                    messenger = Messenger()
                     messenger.send_wr_sms(player, message)
                     wr_messages_sent += 1
 
@@ -76,7 +77,7 @@ def notify_everyone():
                     # TODO add multithreading
                     # https://www.quantstart.com/articles/Parallelising-Python-with-Threading-and-Multiprocessing
 
-        logger.info("Notification finished! \n"
+        logger.info("Notification finished! "
                     "WRs messages sent: {0}".format(wr_messages_sent))
 
     except:
