@@ -63,3 +63,11 @@ just use `create_database_objects=True` and `test_db_models=True`
 - Run it
     - `python startup.py`
   
+## Extra
+
+- To generate the conda environments.yml file again, with 
+the tns source activated:
+
+`conda env export -n tns > environment.yml`
+
+

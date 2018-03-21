@@ -41,3 +41,5 @@ def do_test():
 
     session.commit()
 
+    session.close()
+
