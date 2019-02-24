@@ -50,16 +50,21 @@ psql -h localhost <user> -U <pass>
 
 - Configure it in `config/tns.yml`
 
+- Easier to use a docker container for it though, e.g:
+
+`docker run -d -p 5432:5432 --name tns_postgres -e POSTGRES_PASSWORD=postgres postgres:9.6.12`
+
+
 ## Execution
 
 - Open a terminal with the `tns` virtual env activated
     - It's easier to use PyCharm's terminal option as it starts a terminal
 with the configured env activated
 - Inside `startup.py` file there' a call to `tsn_startup.main()` with 
-some optional parameters. Examples:
+some optional env variables thatn be used. Examples:
     - If you want the db to be recreated and some test models to be inserted, 
-just use `create_database_objects=True` and `test_db_models=True`
-    - To change the log level to `INFO` use `logging_level='INFO'`
+just use `TNS_RECREATE_TABLES=true TNS_TEST_DB_MODELS=true python startup.py`
+    - To change the log level to `INFO` use `TNS_LOG_LEVEL='INFO'`
 - Run it
     - `python startup.py`
   

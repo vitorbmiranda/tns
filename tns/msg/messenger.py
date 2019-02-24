@@ -32,11 +32,10 @@ class Messenger:
         :param to_player: Player that will receive the message
         :param final_message: final formatted message String
         """
-        # TODO call the 'twilio' module to actually pass the message that will be sent
 
         # NEVER write the player's # in the log
-        phone_number = to_player.phone_number
+        phone_number = to_player.decrypted_phone_number
 
-        logger.debug("Player's # number: {0}".format(self.utils.mask_phone_number(tns_crypto.decrypt(phone_number))))
+        logger.debug("Player's # number: {0}".format(self.utils.mask_phone_number(phone_number)))
 
-        # twilio_api.send_sms_message(phone_number, final_message)
+        twilio_api.send_sms_message(phone_number, final_message)

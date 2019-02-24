@@ -9,8 +9,8 @@ import tns.crypto.tns_crypto as tns_crypto
 def do_test():
     session = tns_database.Session()
 
-    player_one = Player('00001', 'Player One', tns_crypto.encrypt('9999999999'))
-    player_two = Player('00002', 'Player Two', tns_crypto.encrypt('1010101010'))
+    player_one = Player('00001', 'Player One', tns_crypto.encrypt('+5511974285763'))
+    player_two = Player('00002', 'Player Two', tns_crypto.encrypt('+5500000000000'))
 
     session.add(player_one)
     session.add(player_two)
@@ -36,7 +36,7 @@ def do_test():
     session.add(player_one_sub_bops)
     session.add(player_two_sub_wrs)
 
-    meta_info_last_pr = MetaInfo("LAST_PR_FETCHED", "1234")
+    meta_info_last_pr = MetaInfo("LAST_ID", "179000")
     session.add(meta_info_last_pr)
 
     session.commit()

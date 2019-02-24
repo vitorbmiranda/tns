@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import ForeignKey, Column, Integer, String, DateTime
+from sqlalchemy import ForeignKey, Column, Integer, DateTime
 from sqlalchemy.orm import relationship
 
 from tns.db.database import Base
@@ -14,6 +14,7 @@ class PlayerSubscription(Base):
     player = relationship('Player', back_populates='subscriptions')
 
     subscription_type_id = Column(Integer, ForeignKey("subscription_type.id"), nullable=False)
+    subscription_type = relationship('SubscriptionType')
 
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)

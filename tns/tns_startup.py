@@ -1,5 +1,6 @@
 import logging.config
 import yaml
+import os
 
 import tns.cfg.config as tns_config
 import tns.db.database as tns_database
@@ -80,7 +81,6 @@ def main(
 
     tns_config_file = kwargs.get('tns_config_file', 'config/tns.yml')
     tns_logging_config_file = kwargs.get('tns_logging_config_file', 'config/logging.yml')
-    logging_level = kwargs.get('logging_level')
     create_database_objects = kwargs.get('create_database_objects', False)
     test_db_models = kwargs.get('test_db_models', False)
 
@@ -88,8 +88,9 @@ def main(
     __load_log_config(file_path=tns_logging_config_file)
 
     # if a log level parameter was passed, set it in the logger instance
-    if logging_level:
-        logging.getLogger().setLevel(logging_level)
+    log_level = os.environ.get('TNS_LOG_LEVEL')
+    if log_level:
+        logging.getLogger().setLevel(log_level)
 
     # instanciate the logger
     logger = logging.getLogger(__name__)
@@ -109,12 +110,12 @@ def main(
     tns_crypto.init(key_location)
 
     # recreate db
-    if create_database_objects:
+    if os.environ.get('TNS_RECREATE_TABLES') == 'true':
         logger.warning("Recreating TNS tables")
         tns_database.create()
         logger.warning("TNS tables dropped and created again!")
 
-    if test_db_models:
+    if os.environ.get('TNS_TEST_DB_MODELS') == 'true':
         logger.warning("Inserting dummy models instances")
         test_models.do_test()
         logger.warning("Done inserting dummy models!")

@@ -1,10 +1,11 @@
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, LargeBinary
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from tns.db.database import Base
 from tns.db.model.player_subscription import PlayerSubscription
-
+import tns.crypto.tns_crypto as tns_crypto
 
 class Player(Base):
 
@@ -24,6 +25,12 @@ class Player(Base):
 
     def __repr__(self):
         return ', '.join("%s: %s" % item for item in vars(self).items())
+
+    # TODO: maybe change to hybrid properties? https://docs.sqlalchemy.org/en/latest/orm/mapped_attributes.html
+    @property
+    def decrypted_phone_number(self):
+        return tns_crypto.decrypt(self.phone_number)
+
 
 Player.subscriptions = relationship(
     'PlayerSubscription',

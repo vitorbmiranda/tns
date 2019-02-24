@@ -1,11 +1,22 @@
 db:
   conn_url: postgresql://{user}:{pwd}@{host}/{database}
   host: localhost
-  user: tns
+  user: postgres
   database: tns
-  pwd: tns#1
+  pwd: postgres
   schema: public
 
 app:
-  elite_rss_feed_uri: https://rankings.the-elite.net/all-prs.rss
-  crypto_key: /Users/vitor/sandbox/tns/tns.key
+  elite_rss_feed_uri: https://rankings.the-elite.net/all-wrs.rss
+  crypto_key: /Users/vitor/workspace/tns/tns.key
+  twilio:
+    live_mode: false
+    credentials:
+      test:
+        sid: ACa1dda8f96757efe8e5e269c5e7cd2eb5
+        token: c4b70322ec95ebf102f6ae27490f3ee9
+        from: +15005550006
+      live:
+        sid: ACe2af7ac49cbaceaedfc14fc6f737afd0
+        token:
+        from: +2024997282

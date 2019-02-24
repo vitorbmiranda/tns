@@ -1,8 +1,11 @@
 import feedparser
 import logging.config
+import re
 
 from tns.parser.elite_rss.model.feeditem import FeedItem
-from tns.parser.elite_rss.exception.elite_rss_exceptions import EliteFeedParseInvalidHttpStatusException
+from tns.parser.elite_rss.exception.elite_rss_exceptions \
+    import EliteFeedParseInvalidHttpStatusException, EliteFeedParseNoLastIDException
+import tns.db.service.meta_info as meta_info_service
 import tns.cfg.config as config
 
 logger = logging.getLogger(__name__)
@@ -10,10 +13,7 @@ logger = logging.getLogger(__name__)
 
 def get_feed():
     """
-    Parse the-elite's RSS feed and return a list of items with info about the Record
-
-    ** PS: talking to Thingy about adding more relevant info that could be useful to us,
-    such as points gained, player ID, level name etc.
+    Parse the-elite's RSS feed and return a list of items with info about the Record.
 
     :return: list of feed items
     """
@@ -40,6 +40,12 @@ def get_feed():
 
         all_items = feed_root['entries']
 
+        # get the last ID stored in the meta_info table
+        last_id = meta_info_service.get_last_id_meta_info().value
+
+        if not last_id:
+            raise EliteFeedParseNoLastIDException()
+
         # navigate through item list and create new FeedItem object
         for item in all_items:
 
@@ -48,18 +54,34 @@ def get_feed():
             f_link = item['link']
             f_description = item['description']
             f_pubdate = item['published']
+            f_game = item['rnk_gameinitials']
+            f_is_wr = item['rnk_worldrecord']
+            f_is_untied_wr = item['rnk_untiedworldrecord']
+            f_player_name = item['rnk_playername']
+            f_player_alias = item['rnk_playeralias']
+            f_stage = item['rnk_stage']
+            f_difficulty = item['rnk_difficulty']
+            f_timehms = item['rnk_timehms']
+            f_video_type = item['rnk_videotype']
+            f_video_id = item['rnk_videoid']
 
-            # TODO: check if a PR in the list is older than our last fetched PR
-            # if so, we stop reading the feed
+            record_id = re.search('.*time\/(\d+)', item.link).group(1)
+
+            logger.debug("Record ID: {0}".format(record_id))
+
+            if int(record_id) <= int(last_id):
+                break;
 
             # create a new FeedItem instance and add it to the list
-            this_item = FeedItem(f_title, f_link, f_description, f_pubdate)
+            this_item = FeedItem(f_title, f_link, f_description, f_pubdate, f_game, f_is_wr, f_is_untied_wr,
+                                 f_player_name, f_player_alias, f_stage, f_difficulty, f_timehms, f_video_type,
+                                 f_video_id)
             feed_items.append(this_item)
             logger.debug("appended: {0}".format(this_item))
 
         logger.info("Finished the-elite's RSS feed parse! Items fetched: {0}".format(len(feed_items)))
 
-        return feed_items
+        return list(reversed(feed_items))
 
     except Exception:
         logger.exception("Error parsing the-elite' RSS feed!")

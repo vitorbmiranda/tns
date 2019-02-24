@@ -1,7 +1,9 @@
 import logging.config
+import re
 
 import tns.db.database as database
 import tns.parser.elite_rss.elite_rss_parser as elite_rss_parser
+import tns.db.service.meta_info as meta_info_service
 
 from tns.db.model.player import Player
 from tns.msg.model.message import PRMessage
@@ -23,13 +25,13 @@ def notify_everyone():
         # start a DB session
         session = database.Session()
 
-        # check feed
-
-        # TODO perhaps we pass a parameter to filter only >= last execution date/PR?
-        # this parameter would be stored in our 'meta_data' table
+        # get the RSS items (oldest ones first)
         feed_items = elite_rss_parser.get_feed()
 
-        # if anything was fetched (assuming that we only fetch new prs filtering by date)
+        # total number of wr messages sent
+        wr_messages_sent = 0
+
+        # if anything was fetched
         if len(feed_items) > 0:
 
             # load the players in the database
@@ -37,52 +39,52 @@ def notify_everyone():
 
             # for every item in the feed
             for item in feed_items:
+
+                record_id = re.search('.*time\/(\d+)', item.link).group(1)
+
                 logger.debug("Checking PR '{0}'".format(item.title))
 
-                # TODO here we already can check if it's a WR or >= X pts - those aren't related to the user profile
-                # this flag will be True if this time is a WR/UWR
-                is_wr = True
+                # use the player name or player alias accordingly
+                player_name_or_alias = item.player_name if item.game == 'ge' else item.player_alias
 
-                # TODO here we need to get how much points this record gave (hopefully by rss)
-                # this flag will be True if this time has over X points (e.g 80, we have to configure that)
-                is_high_points = True
+                # is the time a world record (double checking because we are already checking the wrs feeds only)
+                is_wr = item.is_wr
 
-                # TODO use variables so we know how many players were notified
-                # maybe even store every single player + subtype that was sent
-                wr_messages_sent = 0
+                if is_wr:
 
-                # for every player
-                for player in players:
+                    # for every player in our database
+                    for player in players:
 
-                    # check the players subscriptions
-                    logger.debug("Player: {0}".format(player))
+                        # check the players subscriptions
+                        logger.debug("Player: {0}".format(player))
 
-                    # TODO here we check which subscriptions the player has
-                    # get the user subscriptions
-                    # player_subscriptions = player.subscriptions
-                    # for each one, check if it fits the condition
-                    # if so, send ONE sms (not one for every sub)
+                        player_subscriptions = player.subscriptions
 
-                    # TODO we need to define an ordering, e.g: WR > bops > X pointers
-                    # have to adapt this to send one message accordingly
+                        # check within the subscriptions if the player should be notified
+                        for sub in player_subscriptions:
+                            if sub.subscription_type.key == 'SUB_WRS':
+                                should_player_be_notified = True;
 
-                    # TODO get the data from the 'item' object, we don't have everything yet
-                    message = PRMessage("Din Mor", "GE", "Dam", "Agent", "0:50", 100)
+                        if should_player_be_notified:
+                            message = PRMessage(player_name_or_alias, item.game, item.stage,
+                                                item.difficulty, item.time_hms, 100)
 
-                    messenger = Messenger()
-                    messenger.send_wr_sms(player, message)
-                    wr_messages_sent += 1
+                            messenger = Messenger()
+                            messenger.send_wr_sms(player, message)
+                            wr_messages_sent += 1
 
+                        # TODO add multithreading
+                        # https://www.quantstart.com/articles/Parallelising-Python-with-Threading-and-Multiprocessing
 
-                    # TODO add multithreading
-                    # https://www.quantstart.com/articles/Parallelising-Python-with-Threading-and-Multiprocessing
+            last_id = record_id
+            meta_info_service.update_last_id_meta_info(session, last_id)
 
-        logger.info("Notification finished! "
-                    "WRs messages sent: {0}".format(wr_messages_sent))
+        logger.info("Notification finished! WRs messages sent: {0}".format(wr_messages_sent))
 
     except:
         session.rollback()
         raise
 
     finally:
+        session.commit()
         session.close()
