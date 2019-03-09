@@ -14,23 +14,27 @@ def init(key_location):
 
     global encrypter
 
-    key = __load_key(key_location)
+    if os.path.isfile('fernet.key'):
+        final_key = __load_fernet_key('fernet.key')
+    else:
+        key = __load_key(key_location)
 
-    # have to use some shenanigans to generate a custom key
-    # https://github.com/pyca/cryptography/issues/1333
+        # have to use some shenanigans to generate a custom key
+        # https://github.com/pyca/cryptography/issues/1333
 
-    backend = default_backend()
-    salt = os.urandom(16)
+        backend = default_backend()
+        salt = os.urandom(16)
 
-    kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA256(),
-        length=32,
-        salt=salt,
-        iterations=100000,
-        backend=backend
-    )
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=salt,
+            iterations=100000,
+            backend=backend
+        )
 
-    final_key = base64.urlsafe_b64encode(kdf.derive(key.encode()))
+        final_key = base64.urlsafe_b64encode(kdf.derive(key.encode()))
+        __save_fernet_key(final_key)
 
     encrypter = Fernet(final_key)
 
@@ -49,3 +53,14 @@ def __load_key(key_location):
         key = keyfile.read()
 
     return key
+
+
+def __load_fernet_key(key_location):
+    with open(key_location, 'rb') as keyfile:
+        key = keyfile.read()
+    return key
+
+
+def __save_fernet_key(key):
+    f = open('fernet.key', 'xb')
+    f.write(key)
