@@ -60,6 +60,8 @@ def notify_everyone():
 
                         player_subscriptions = player.subscriptions
 
+                        should_player_be_notified = False;
+
                         # check within the subscriptions if the player should be notified
                         for sub in player_subscriptions:
                             if sub.subscription_type.key == 'SUB_WRS':
