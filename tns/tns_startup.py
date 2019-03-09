@@ -61,9 +61,11 @@ def __build_db_url(db_config):
 
 
 def main(
+    start_scheduler: True,
     **kwargs
 ):
     """
+    :param start_scheduler: should start the scheduler or not
     :param kwargs:
         tns_config_file: tns config file path
             Default: <root>/config/tns.yml
@@ -120,6 +122,7 @@ def main(
         test_models.do_test()
         logger.warning("Done inserting dummy models!")
 
-    tns_scheduler.run()
+    if start_scheduler:
+        tns_scheduler.run()
+        logger.info("TNS initialized!")
 
-    logger.info("TNS initialized!")
