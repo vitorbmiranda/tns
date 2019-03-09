@@ -108,3 +108,6 @@ venv.bak/
 
 # crypto key
 tns.key
+
+# fernet key
+fernet.key
