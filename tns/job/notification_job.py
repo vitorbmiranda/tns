@@ -85,7 +85,6 @@ def notify_everyone():
 
     except:
         session.rollback()
-        raise
 
     finally:
         session.commit()
