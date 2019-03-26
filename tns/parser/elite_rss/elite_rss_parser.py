@@ -30,7 +30,7 @@ def get_feed():
 
         feed_root = feedparser.parse(feed_uri)
 
-        if feed_root.status != 200:
+        if not feed_root.status or feed_root.status != 200:
             raise EliteFeedParseInvalidHttpStatusException()
 
         logger.debug("Feed parsed successfully!")
@@ -85,4 +85,3 @@ def get_feed():
 
     except Exception:
         logger.exception("Error parsing the-elite' RSS feed!")
-        raise

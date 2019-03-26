@@ -15,7 +15,6 @@ def update_last_id_meta_info(session, last_id):
         one()
     meta.value = last_id
 
-
 def get_last_id_meta_info():
     """
     Retrieve the last RSS feed item id from the meta_info table.
